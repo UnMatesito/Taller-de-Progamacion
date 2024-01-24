@@ -1,0 +1,159 @@
+programa E04P2
+
+procesos
+  proceso juntarFloresyPapeles(ES cantFlores:numero ES cantPapeles:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+
+  proceso setEsquinaInicial(ES avInicial:numero ES caInicial:numero)
+  comenzar
+    avInicial:= PosAv
+    caInicial:= PosCa
+  fin
+  
+  proceso limpiar(E avInicial:numero E caInicial:numero ES cantFlores:numero ES cantPapeles:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    Random(av, 25,75)
+    Random(ca, 25,75)
+    Pos(av,ca)
+    juntarFloresyPapeles(cantFlores,cantPapeles)
+    Pos(avInicial, caInicial)
+  fin
+  
+  proceso actMaximo(E total:numero E id:numero ES ganador:numero)
+  variables
+    max:numero
+  comenzar
+    max := -1
+    si total > max
+      max := total
+      ganador := id
+  fin
+
+  proceso determinarGanador(E id:numero ES ganador:numero)
+  variables
+    total:numero
+  comenzar
+    si id = 1
+      RecibirMensaje(total, r1)
+      actMaximo(total, id, ganador)
+    si id = 2
+      RecibirMensaje(total, r2)
+      actMaximo(total, id, ganador)
+    si id = 3
+      RecibirMensaje(total, r3)
+      actMaximo(total, id, ganador)
+    si id = 4
+      RecibirMensaje(total, r4)
+      actMaximo(total, id, ganador)
+  fin
+
+areas
+  punto1: AreaP(25,1,25,1)
+  punto2: AreaP(30,1,30,1)
+  punto3: AreaP(35,1,35,1)
+  punto4: AreaP(40,1,40,1)
+  puntojefe: AreaP(1,1,1,1)
+  area: AreaPC(25,25,75,75)
+
+robots
+  robot recolector
+  variables
+    avInicial:numero
+    caInicial:numero
+    cantFlores:numero
+    cantPapeles:numero
+    av:numero
+    ca:numero
+    id:numero
+    puedo: boolean
+    quienleToca:numero
+    total:numero
+    ganador:numero
+  comenzar
+    cantFlores:= 0
+    cantPapeles:= 0
+    setEsquinaInicial(avInicial, caInicial)
+    RecibirMensaje(id, jefe)
+    RecibirMensaje(puedo, jefe)
+    mientras puedo
+      limpiar(avInicial, caInicial, cantFlores, cantPapeles)
+      EnviarMensaje(id, jefe)
+      RecibirMensaje(puedo, jefe)
+    total := cantFlores + cantPapeles
+    EnviarMensaje(id, jefe)
+    EnviarMensaje(total, jefe)
+    RecibirMensaje(ganador, jefe)
+    si ganador = id
+      Pos(50,50)
+  fin
+
+  robot fiscalizador
+  variables
+    id: numero
+    ganador:numero
+    quienleToca:numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+    repetir 10
+      Random(quienleToca, 1,4)
+      si quienleToca = 1
+        EnviarMensaje(V,r1)
+      sino
+        si quienleToca = 2
+          EnviarMensaje(V,r2)
+        sino
+          si quienleToca = 3
+            EnviarMensaje(V,r3)
+          sino
+            si quienleToca = 4
+              EnviarMensaje(V,r4)
+      RecibirMensaje(quienleToca, *)
+    EnviarMensaje(F,r1)
+    EnviarMensaje(F,r2)
+    EnviarMensaje(F,r3)
+    EnviarMensaje(F,r4)    
+    repetir 4
+      RecibirMensaje(id, *)
+      determinarGanador(id, ganador)
+    EnviarMensaje(ganador, r1)
+    EnviarMensaje(ganador, r2)
+    EnviarMensaje(ganador, r3)
+    EnviarMensaje(ganador, r4)
+  fin
+
+variables
+  jefe: fiscalizador
+  r1: recolector
+  r2: recolector
+  r3: recolector
+  r4: recolector
+  
+comenzar
+  AsignarArea(jefe, puntojefe)
+  AsignarArea(r1, punto1)
+  AsignarArea(r2, punto2)
+  AsignarArea(r3, punto3)
+  AsignarArea(r4, punto4)
+  AsignarArea(r1, area)
+  AsignarArea(r2, area)
+  AsignarArea(r3, area)
+  AsignarArea(r4, area)
+  Iniciar(jefe,1,1)
+  Iniciar(r1,25,1)
+  Iniciar(r2,30,1)
+  Iniciar(r3,35,1)
+  Iniciar(r4,40,1)
+fin

@@ -1,0 +1,5 @@
+puntos criticos
+Avenida: 8, Calle: 5 (florero y floreroYpapelero)
+Avenida: 5, Calle: 8 (florero y floreroYpapelero)
+Avenida: 15, Calle: 8 (papelero y floreroYpapelero)
+Avenida: 9, Calle: 15 (papelero y floreroYPapelero) 

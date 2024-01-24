@@ -1,0 +1,134 @@
+programa E04P3
+
+procesos
+  proceso juntarUnaFlor(ES hayFlor: boolean)
+  comenzar
+    si HayFlorEnLaEsquina
+      tomarFlor
+    sino
+      hayFlor := F
+  fin
+  
+  proceso depositarUnaFlor
+  comenzar
+    si HayFlorEnLaBolsa
+      depositarFlor
+  fin
+  
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+
+  proceso posicionInicial(ES avInicial:numero ES caInicial:numero)
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+  fin
+
+  proceso enviarIds
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+
+  proceso determinarRobot(E id:numero)
+  comenzar
+    si id = 1
+      Informar(id)
+    si id = 2
+      Informar(id)
+    si id = 3
+      Informar(id)
+    si id = 4
+      Informar(id)
+  fin
+
+areas
+  puntoJefe: AreaP(1,1,1,1)
+  punto1: AreaP(9,9,9,9)
+  punto2: AreaP(9,10,9,10)
+  punto3: AreaP(9,11,9,11)
+  punto4: AreaP(9,12,9,12)
+  puntoFlores: AreaPC(10,10,10,10)
+  puntoDepositar: AreaC(11,11,11,11)
+robots
+  robot recolector
+  variables
+    id:numero
+    hayFlor:boolean
+    finalice:boolean
+    avInicial:numero
+    caInicial:numero
+  comenzar
+    posicionInicial(avInicial, caInicial)
+    RecibirMensaje(id, jefe)
+    hayFlor := V
+    finalice := F
+    mientras hayFlor = V
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      juntarUnaFlor(hayFlor)
+      Pos(11,11)
+      BloquearEsquina(11,11)
+      LiberarEsquina(10,10)
+      depositarUnaFlor
+      Pos(avInicial, caInicial)
+      LiberarEsquina(11,11)
+    si hayFlor = F
+      finalice := V
+    EnviarMensaje(id, jefe)
+    EnviarMensaje(finalice, jefe)
+  fin
+
+  robot jefe
+  variables
+    avInicial: numero
+    caInicial: numero
+    finalice: boolean
+    id: numero
+  comenzar
+    posicionInicial(avInicial, caInicial)
+    enviarIds
+    repetir 4
+      RecibirMensaje(finalice, *)
+    si finalice = V
+      RecibirMensaje(id, *)
+      determinarRobot(id)
+    BloquearEsquina(11,11)
+    Pos(11,11)
+    juntarFlores
+    Pos(avInicial, caInicial)
+    LiberarEsquina(11,11)
+  fin
+
+variables
+  jefe: jefe
+  r1: recolector
+  r2: recolector
+  r3: recolector
+  r4: recolector
+comenzar
+  AsignarArea(r1, punto1)
+  AsignarArea(r2, punto2)
+  AsignarArea(r3, punto3)
+  AsignarArea(r4, punto4)
+  AsignarArea(jefe, puntoJefe)
+  AsignarArea(r1, puntoFlores)
+  AsignarArea(r2, puntoFlores)
+  AsignarArea(r3, puntoFlores)
+  AsignarArea(r4, puntoFlores)
+  AsignarArea(r1, puntoDepositar)
+  AsignarArea(r2, puntoDepositar)
+  AsignarArea(r3, puntoDepositar)
+  AsignarArea(r4, puntoDepositar)
+  AsignarArea(jefe, puntoDepositar)
+  Iniciar(r1,9,9)
+  Iniciar(r2,9,10)
+  Iniciar(r3,9,11)
+  Iniciar(r4,9,12)
+  Iniciar(jefe,1,1)
+fin

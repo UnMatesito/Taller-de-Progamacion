@@ -1,0 +1,89 @@
+programa E02P3
+
+procesos
+  proceso girar(E n:numero)
+  comenzar
+    repetir n
+      derecha
+  fin
+  
+  proceso juntarFloresyPapeles(ES cantFlores:numero ES cantPapeles:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores:= cantFlores + 1
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+  
+  proceso escalon(ES cantFlores:numero ES cantPapeles:numero)
+  variables
+    pasos:numero
+  comenzar
+    Random(pasos, 1, 5)
+    repetir pasos
+      juntarFloresyPapeles(cantFlores, cantPapeles)
+      mover
+    juntarFloresyPapeles(cantFlores, cantPapeles)
+    girar(1)
+    mover
+    juntarFloresyPapeles(cantFlores, cantPapeles)
+    girar(3)
+  fin
+
+  proceso escalera
+  variables
+    cantFlores:numero
+    cantPapeles:numero
+    cantEscalones:numero
+  comenzar
+    cantEscalones:= 0
+    repetir 4
+      cantFlores:= 0
+      cantPapeles:= 0
+      escalon(cantFlores, cantPapeles)
+      si cantFlores > cantPapeles
+        cantEscalones := cantEscalones + 1
+    EnviarMensaje(cantEscalones, r4)
+  fin
+
+  proceso calcularTotalEscalones
+  variables
+    cantEscalones:numero
+    totalEscalones:numero
+  comenzar
+    totalEscalones:= 0
+    repetir 3
+      RecibirMensaje(cantEscalones, *)
+      totalEscalones := totalEscalones + cantEscalones
+    Informar(totalEscalones)
+  fin
+areas
+  ciudad: AreaC (1,1,50,50)
+robots
+  robot robot1
+  comenzar
+    escalera
+  fin
+
+  robot jefe
+  comenzar
+    calcularTotalEscalones
+  fin
+
+variables
+  r1: robot1
+  r2: robot1
+  r3: robot1
+  r4: jefe
+comenzar
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(r3, ciudad)
+  AsignarArea(r4,ciudad)
+  Iniciar(r1,2,1)
+  Iniciar(r2,7,1)
+  Iniciar(r3,12,1)
+  Iniciar(r4,1,1)
+fin

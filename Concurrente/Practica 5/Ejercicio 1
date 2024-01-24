@@ -1,0 +1,125 @@
+programa E01P5
+
+procesos
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso juntarPapeles(ES cantPapeles:numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+  
+  
+  proceso totalesPorId(E id:numero ES totalFlores:numero ES totalPapeles:numero)
+  variables
+    cantFlores:numero
+    cantPapeles: numero
+  comenzar
+    si id = 1
+      RecibirMensaje(cantFlores, r1)
+      totalFlores := totalFlores + cantFlores
+    sino
+      si id = 2
+        RecibirMensaje(cantFlores, r2)
+        totalFlores := totalFlores + cantFlores
+      sino
+        si id = 3
+          RecibirMensaje(cantPapeles, r3)
+          totalPapeles := totalPapeles + cantPapeles
+        sino
+          si id = 4
+            RecibirMensaje(cantPapeles, r4)
+            totalPapeles := totalPapeles + cantPapeles       
+  fin
+  
+  proceso determinarGanador(E totalFlores:numero E totalPapeles:numero ES ganador:numero)
+  comenzar
+    si totalFlores > totalPapeles
+      ganador := 1
+    sino
+      ganador := 2
+  fin
+  
+areas
+  lineaRojo1: AreaP(2,1,2,100)
+  lineaRojo2: AreaP(3,1,3,100)
+  lineaAzul1: AreaP(98,1,98,100)
+  lineaAzul2: AreaP(99,1,99,100)
+  puntoJefe: AreaP(1,1,1,1)
+  
+robots
+  robot rojo
+  variables
+    id : numero
+    cantFlores: numero
+  comenzar
+    RecibirMensaje(id, r5)
+    cantFlores := 0
+    mientras PosCa <> 100
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+    EnviarMensaje(id, r5)
+    EnviarMensaje(cantFlores, r5)
+  fin
+  
+  robot azul
+  variables
+    id: numero
+    cantPapeles: numero
+  comenzar
+    RecibirMensaje(id, r5)
+    cantPapeles := 0
+    mientras PosCa <> 100
+      juntarPapeles(cantPapeles)
+      mover
+    juntarPapeles(cantPapeles)
+    EnviarMensaje(id, r5)
+    EnviarMensaje(cantPapeles, r5)
+  fin
+  
+  robot jefe
+  variables
+    id: numero
+    totalFlores: numero
+    totalPapeles: numero
+    ganador: numero
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+    totalFlores := 0
+    totalPapeles := 0
+    ganador := 0
+    repetir 4
+      RecibirMensaje(id, *)
+      totalesPorId(id, totalFlores, totalPapeles)
+    determinarGanador(totalFlores, totalPapeles, ganador)
+    Informar('Equipo_Ganador', ganador) 
+  fin
+  
+variables
+  r1: rojo
+  r2: rojo
+  r3: azul
+  r4: azul
+  r5: jefe
+comenzar
+  AsignarArea(r1, lineaRojo1)
+  AsignarArea(r2, lineaRojo2)
+  AsignarArea(r3, lineaAzul1)
+  AsignarArea(r4, lineaAzul2)
+  AsignarArea(r5, puntoJefe)
+  Iniciar(r1, 2,1)
+  Iniciar(r2, 3,1)
+  Iniciar(r3, 98,1)
+  Iniciar(r4, 99,1)
+  Iniciar(r5, 1,1)
+fin

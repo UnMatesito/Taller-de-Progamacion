@@ -1,0 +1,140 @@
+programa E01P5
+
+procesos
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso juntarPapeles(ES cantPapeles:numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+  
+  proceso determinarGanador(E totalFlores:numero E totalPapeles:numero)
+  comenzar
+    si totalFlores > totalPapeles
+      Informar('Equipo_Ganador', 1)
+    sino
+      Informar('Equipo_Ganador', 2)
+  fin
+areas
+  lineaR1: AreaP(2,1,2,100)
+  lineaR2: AreaP(3,1,3,100)
+  lineaA1: AreaP(1,98,100,98)
+  lineaA2: AreaP(1,99,100,99)
+  puntoJefe: AreaP(1,1,1,1)
+  
+robots
+  robot rojo
+  variables
+    id: numero
+    cantFlores: numero
+    caSig: numero
+  comenzar
+    RecibirMensaje(id, jefe)
+    cantFlores := 0
+    repetir 96
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+    caSig := PosCa + 1
+    BloquearEsquina(PosAv, caSig)
+    mover
+    juntarFlores(cantFlores)
+    BloquearEsquina(PosAv, (caSig + 1))
+    mover
+    LiberarEsquina(PosAv, caSig)
+    juntarFlores(cantFlores)
+    mover
+    LiberarEsquina(PosAv, (caSig + 1))
+    juntarFlores(cantFlores)
+    EnviarMensaje(id, jefe)
+    EnviarMensaje(cantFlores, jefe)
+  fin
+  
+  robot azul
+  variables
+    id: numero
+    cantPapeles: numero
+    avSig: numero
+  comenzar
+    RecibirMensaje(id, jefe)
+    cantPapeles := 0
+    derecha
+    avSig := PosAv + 1
+    juntarPapeles(cantPapeles)
+    BloquearEsquina(avSig, PosCa)
+    mover
+    juntarPapeles(cantPapeles)
+    BloquearEsquina((avSig + 1), PosCa)
+    mover
+    LiberarEsquina(avSig, PosCa)
+    juntarPapeles(cantPapeles)
+    mover
+    LiberarEsquina((avSig + 1), PosCa)
+    repetir 96
+      juntarPapeles(cantPapeles)
+      mover
+    juntarPapeles(cantPapeles)
+    EnviarMensaje(id, jefe)
+    EnviarMensaje(cantPapeles, jefe)
+  fin
+  
+  robot fiscalizador
+  variables
+    cantFlores:numero
+    cantPapeles: numero
+    totalFlores: numero
+    totalPapeles: numero
+    id: numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,a1)
+    EnviarMensaje(4,a2)
+    totalFlores := 0
+    totalPapeles := 0
+    repetir 4
+      RecibirMensaje(id, *)
+      si id = 1
+        RecibirMensaje(cantFlores, r1)
+        totalFlores := totalFlores + cantFlores
+      sino
+        si id = 2
+          RecibirMensaje(cantFlores, r2)
+          totalFlores := totalFlores + cantFlores
+        sino
+          si id = 3
+            RecibirMensaje(cantPapeles, a1)
+            totalPapeles := totalPapeles + cantPapeles
+          sino
+            si id = 4
+              RecibirMensaje(cantPapeles, a2)
+              totalPapeles := totalPapeles + cantPapeles
+    determinarGanador(totalFlores, totalPapeles)
+  fin
+  
+variables
+  r1: rojo
+  r2: rojo
+  a1: azul
+  a2: azul
+  jefe: fiscalizador
+
+comenzar
+  AsignarArea(r1,lineaR1)
+  AsignarArea(r2,lineaR2)
+  AsignarArea(a1,lineaA1)
+  AsignarArea(a2,lineaA2)
+  AsignarArea(jefe,puntoJefe)
+  Iniciar(r1,2,1)
+  Iniciar(r2,3,1)
+  Iniciar(a1,1,98)
+  Iniciar(a2,1,99)
+  Iniciar(jefe,1,1)
+fin

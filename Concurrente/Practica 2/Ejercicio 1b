@@ -1,0 +1,63 @@
+programa E01P3
+
+procesos
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso recorrerLinea(ES cantFlores:numero)
+  comenzar
+    repetir 9
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+  fin
+
+  proceso diferenciaFlores(E cantFlores1:numero E cantFlores2:numero)
+  comenzar
+    si cantFlores1 > cantFlores2
+      Informar(cantFlores1-cantFlores2)
+    sino
+      Informar(cantFlores2-cantFlores1)
+  fin
+
+areas
+  linea1: AreaP(1,1,1,10)
+  linea2: AreaP(2,11,2,20)
+  punto: AreaP(2,1,2,1)
+
+robots
+  robot competidor
+  variables
+    cantFlores: numero
+  comenzar
+    cantFlores := 0
+    recorrerLinea(cantFlores)
+    EnviarMensaje(cantFlores, r3)
+  fin
+
+  robot fiscalizador
+  variables
+    cantFlores1:numero
+    cantFlores2:numero
+  comenzar
+    RecibirMensaje(cantFlores1, *)
+    RecibirMensaje(cantFlores2, *)
+    diferenciaFlores(cantFlores1, cantFlores2)
+  fin
+
+variables
+  r1: competidor
+  r2: competidor
+  r3: fiscalizador
+comenzar
+  AsignarArea(r1, linea1)
+  AsignarArea(r2, linea2)
+  AsignarArea(r3, punto)
+  Iniciar(r1,1,1)
+  Iniciar(r2,2,11)
+  Iniciar(r3,2,1)
+fin

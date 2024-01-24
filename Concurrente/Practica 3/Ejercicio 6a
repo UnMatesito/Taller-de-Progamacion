@@ -1,0 +1,234 @@
+programa E06AP3
+
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+  proceso juntarFloresyPapeles
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+  proceso determinarCalles(E id:numero)
+  comenzar
+    si id = 1
+      EnviarMensaje(V, r1)
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r3)
+    sino 
+      si id = 2
+        EnviarMensaje(V, r2)
+        EnviarMensaje(F, r1)
+        EnviarMensaje(F, r3)
+      sino
+        si id = 3
+          EnviarMensaje(V, r3)
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r1)
+  fin
+
+  proceso robotEnCalle(E calle:numero)
+  variables
+    comoQuede: boolean
+  comenzar
+    RecibirMensaje(comoQuede, fiscalizador)
+    si comoQuede = V
+      Pos(1,calle)
+      comoQuede := F
+  fin
+
+  proceso determinarTipo(E tipo:numero)
+  comenzar
+    si tipo = 1
+      si HayFlorEnLaBolsa
+        depositarFlor
+      mover
+    si tipo = 2
+      si HayFlorEnLaBolsa
+        depositarFlor
+      mover
+      si HayPapelEnLaBolsa
+        depositarFlor
+    si tipo = 3
+      si HayPapelEnLaBolsa
+        depositarPapel
+      mover
+  fin
+
+  proceso recorrerLinea(E tipo:numero)
+  comenzar
+    derecha
+    mientras ((PosAv <> 100) | (HayPapelEnLaBolsa) | (HayFlorEnLaBolsa))
+      determinarTipo(tipo)
+  fin
+
+areas
+  puntoJefe: AreaP(1,1,1,1)
+  cuadrado: AreaPC(2,2,16,16)
+  lineaPrimero: AreaPC(1,20,100,20)
+  lineaSegundo: AreaPC(1,21,100,21)
+  lineaTercero: AreaPC(1,22,100,22)
+
+robots
+  robot florero
+  variables
+    id:numero
+    seguir:boolean
+  comenzar
+    RecibirMensaje(id, fiscalizador)
+    repetir 4
+      repetir 6
+        si ((PosAv + 1 = 8) & (PosCa + 1 = 5))
+          BloquearEsquina(PosAv, PosCa)
+          juntarFlores
+          mover
+          LiberarEsquina(8,5)
+        sino
+          si ((PosAv + 1  = 5) & (PosCa + 1 = 8))
+            BloquearEsquina(PosAv, PosCa)
+            juntarFlores
+            mover
+            LiberarEsquina(5,8)
+          sino
+            juntarFlores
+            mover
+      derecha
+    EnviarMensaje(id, fiscalizador)
+    robotEnCalle(20)
+    robotEnCalle(21)
+    robotEnCalle(22)
+    {segunda parte}
+    RecibirMensaje(seguir, fiscalizador)
+    si seguir = V
+      recorrerLinea(1)
+  fin
+
+  robot floreroYpapelero
+  variables
+    id:numero
+    seguir:boolean
+  comenzar
+    RecibirMensaje(id, fiscalizador)
+    repetir 4
+      repetir 10
+        si ((PosAv + 1  = 8) & (PosCa + 1 = 5))
+          BloquearEsquina(PosAv + 1, PosCa + 1)
+          juntarFloresyPapeles
+          mover
+          LiberarEsquina(8,5)
+        sino
+          si ((PosAv + 1 = 5) & (PosCa + 1 = 8))
+            BloquearEsquina(PosAv + 1, PosCa + 1)
+            juntarFloresyPapeles
+            mover
+            LiberarEsquina(5,8)
+          sino
+            si ((PosAv + 1 = 15) & (PosCa + 1 = 8))
+              BloquearEsquina(PosAv + 1 , PosCa + 1)
+              juntarFloresyPapeles
+              mover
+              LiberarEsquina(15,8)
+            sino
+              si ((PosAv + 1 = 9) & (PosCa + 1 = 15))
+                BloquearEsquina(PosAv + 1, PosCa + 1)
+                juntarFloresyPapeles
+                mover
+                LiberarEsquina(9,15)
+              sino
+                juntarFloresyPapeles
+                mover
+      derecha
+    EnviarMensaje(id, fiscalizador)
+    robotEnCalle(20)
+    robotEnCalle(21)
+    robotEnCalle(22)
+    {segunda parte}
+    RecibirMensaje(seguir, fiscalizador)
+    si seguir = V
+      recorrerLinea(2)
+  fin
+
+  robot papelero
+  variables
+    id: numero
+    seguir:boolean
+  comenzar
+    RecibirMensaje(id, fiscalizador)
+    repetir 4
+      repetir 7
+        si ((PosAv + 1 = 15) & (PosCa + 1 = 8))
+          BloquearEsquina(PosAv + 1, PosCa + 1)
+          juntarFloresyPapeles
+          mover
+          LiberarEsquina(15,8)
+        sino
+          si ((PosAv +1  = 9) & (PosCa + 1 = 15))
+            BloquearEsquina(PosAv + 1, PosCa + 1)
+            juntarFloresyPapeles
+            mover
+            LiberarEsquina(9,15)
+          sino
+            juntarPapeles
+            mover
+      derecha
+    EnviarMensaje(id, fiscalizador)
+    robotEnCalle(20)
+    robotEnCalle(21)
+    robotEnCalle(22)
+    {segunda parte}
+    RecibirMensaje(seguir, fiscalizador)
+    si seguir = V
+      recorrerLinea(3)
+  fin
+  
+  robot jefe
+  variables
+    id:numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    repetir 3
+      RecibirMensaje(id, *)
+      determinarCalles(id)
+    EnviarMensaje(V, r1)
+    EnviarMensaje(V, r2)
+    EnviarMensaje(V, r3)
+  fin
+
+variables
+  fiscalizador: jefe
+  r1: florero
+  r2: floreroYpapelero
+  r3: papelero
+comenzar
+  AsignarArea(fiscalizador, puntoJefe)
+  AsignarArea(r1, cuadrado)
+  AsignarArea(r2, cuadrado)
+  AsignarArea(r3, cuadrado)
+  AsignarArea(r1, lineaPrimero)
+  AsignarArea(r2, lineaPrimero)
+  AsignarArea(r3, lineaPrimero)
+  AsignarArea(r1, lineaSegundo)
+  AsignarArea(r2, lineaSegundo)
+  AsignarArea(r3, lineaSegundo)
+  AsignarArea(r1, lineaTercero)
+  AsignarArea(r2, lineaTercero)
+  AsignarArea(r3, lineaTercero)
+  Iniciar(fiscalizador,1,1)
+  Iniciar(r1,2,2)
+  Iniciar(r2,5,5)
+  Iniciar(r3,9,9)
+fin

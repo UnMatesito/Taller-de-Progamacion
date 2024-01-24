@@ -1,0 +1,120 @@
+programa E05P1
+
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+  proceso depositarFloresUltEsq
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+  fin
+
+  proceso depositarPapelesPriEsq(E primeraAv:numero E primeraCa:numero)
+  comenzar
+    Pos(primeraAv, primeraCa)
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+  fin
+
+  proceso recorrer(E n:numero)
+  comenzar
+    repetir (n-1)
+      si HayFlorEnLaEsquina
+        juntarFlores
+      si HayPapelEnLaEsquina
+        juntarPapeles
+      mover
+    juntarFlores
+  fin
+
+areas
+  esquina1: AreaP(1,75,15,75)
+  esquina2: AreaP(1,80,15,80)
+  esquina3: AreaP(75,80,75,100)
+  esquina4: AreaP(80,80,80,100)
+  esquina5: AreaP(70,15,100,15)
+  esquina6: AreaP(70,10,100,10)
+  esquina7: AreaP(10,1,10,10)
+  esquina8: AreaP(15,1,15,10)
+
+robots
+  robot robot1
+  comenzar
+    derecha
+    recorrer(15)
+    depositarFloresUltEsq
+    Pos(1, 80)
+    recorrer(15)
+    depositarFloresUltEsq
+  fin
+  
+  robot robot2
+  variables
+    primeraAv: numero
+    primeraCa: numero
+  comenzar
+    primeraAv:= PosAv
+    primeraCa:= PosCa
+    recorrer(21)
+    depositarPapelesPriEsq(primeraAv, primeraCa)
+    primeraAv:= primeraAv + 5
+    Pos(primeraAv,primeraCa)
+    recorrer(21)
+    depositarPapelesPriEsq(primeraAv, primeraCa)
+  fin
+
+  robot robot3
+  comenzar
+    derecha
+    recorrer(31)
+    depositarFloresUltEsq
+    Pos(70, 15)
+    recorrer(31)
+    depositarFloresUltEsq
+  fin
+
+  robot robot4
+  variables
+    primeraAv: numero
+    primeraCa: numero
+  comenzar
+    primeraAv:= PosAv
+    primeraCa:= PosCa
+    recorrer(10)
+    depositarPapelesPriEsq(primeraAv, primeraCa)
+    primeraAv:= primeraAv + 5
+    Pos(primeraAv,primeraCa)
+    recorrer(10)
+    depositarPapelesPriEsq(primeraAv, primeraCa)
+  fin
+
+variables
+  r1:robot1
+  r2:robot2
+  r3:robot3
+  r4:robot4
+
+comenzar
+  AsignarArea(r1, esquina1)
+  AsignarArea(r1, esquina2)
+  AsignarArea(r2, esquina3)
+  AsignarArea(r2, esquina4)
+  AsignarArea(r3, esquina5)
+  AsignarArea(r3, esquina6)
+  AsignarArea(r4, esquina7)
+  AsignarArea(r4, esquina8)
+  Iniciar(r1, 1, 75)
+  Iniciar(r2, 75, 80)
+  Iniciar(r3, 70, 10)
+  Iniciar(r4, 10, 1)
+fin

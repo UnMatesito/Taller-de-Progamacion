@@ -1,0 +1,144 @@
+programa Parcial1
+
+procesos
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso recorrerLado(ES cantFlores:numero)
+  comenzar
+    repetir 5
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+  fin
+  
+  proceso actMaximo(E id:numero E cantFlores:numero ES rMax:numero)
+  variables
+    max:numero
+  comenzar
+    max := -1
+    si (cantFlores > max)
+      max := cantFlores
+      rMax := id 
+  fin
+  
+  proceso depositarUnaFlor
+  comenzar
+    si HayFlorEnLaBolsa
+      depositarFlor
+  fin
+  
+areas
+  puntoJefe: AreaP(20,1,20,1)
+  areaT1: AreaP(1,1,6,6)
+  areaT2: AreaP(7,1,12,6)
+  areaT3: AreaP(13,1,18,6)
+  puntoFlores: AreaPC(10,10,10,10)
+robots
+  robot trabajador
+  variables
+    id:numero
+    cantFlores:numero
+    puedo: boolean
+    ca: numero
+    av: numero
+    comoQuede: boolean
+  comenzar
+    RecibirMensaje(id, jefe)
+    cantFlores := 0
+    puedo := V
+    repetir 4
+      si puedo = V
+        recorrerLado(cantFlores)
+        derecha
+        EnviarMensaje(V, jefe)
+      RecibirMensaje(puedo, jefe)
+    EnviarMensaje(id, jefe)
+    EnviarMensaje(cantFlores, jefe)
+    av := PosAv
+    ca := PosCa
+    RecibirMensaje(comoQuede, jefe)
+    si comoQuede = V
+      repetir cantFlores
+        BloquearEsquina(10,10)
+        Pos(10,10)
+        depositarUnaFlor
+        Pos(av, ca)
+        LiberarEsquina(10,10)
+      
+  fin
+  
+  robot coordinador
+  variables
+    termine: boolean
+    contador: numero
+    id: numero
+    cantFlores: numero
+    rMax: numero
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    rMax := 0
+    repetir 4
+      mientras contador <> 3
+        RecibirMensaje(termine, *)
+        si termine = V
+          contador := contador + 1
+      si contador = 3
+        EnviarMensaje(V, r1)
+        EnviarMensaje(V, r2)
+        EnviarMensaje(V, r3)
+        contador := 0
+    repetir 3
+      RecibirMensaje(id,*)
+      si id = 1
+        RecibirMensaje(cantFlores, r1)
+        actMaximo(id, cantFlores, rMax)
+      sino
+        si id = 2
+          RecibirMensaje(cantFlores, r2)
+          actMaximo(id, cantFlores, rMax)
+        sino
+          si id = 3
+            RecibirMensaje(cantFlores, r3)
+            actMaximo(id, cantFlores, rMax)
+    Informar('Ganador_Robot', rMax)
+    si rMax = 1
+      EnviarMensaje(F, r1)
+      EnviarMensaje(V, r2)
+      EnviarMensaje(V, r3)
+    sino
+      si rMax = 2
+        EnviarMensaje(F, r2)
+        EnviarMensaje(V, r1)
+        EnviarMensaje(V, r3)
+      sino
+        si rMax = 3
+          EnviarMensaje(F, r3)
+          EnviarMensaje(V, r1)
+          EnviarMensaje(V, r2)
+  fin
+  
+variables
+  r1: trabajador
+  r2: trabajador
+  r3: trabajador
+  jefe: coordinador
+comenzar
+  AsignarArea(jefe, puntoJefe)
+  AsignarArea(r1, areaT1)
+  AsignarArea(r2, areaT2)
+  AsignarArea(r3, areaT3)
+  AsignarArea(r1, puntoFlores)
+  AsignarArea(r2, puntoFlores)
+  AsignarArea(r3, puntoFlores)
+  Iniciar(r1 ,1,1)
+  Iniciar(r2 ,7,1)
+  Iniciar(r3 ,13,1)
+  Iniciar(jefe ,20,1)
+fin

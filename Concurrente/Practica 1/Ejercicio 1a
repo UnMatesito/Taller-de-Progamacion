@@ -1,0 +1,41 @@
+programa ej01P1
+
+procesos
+  proceso contarFloresDepositadas(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+      cantFlores := cantFlores + 1
+  fin
+
+areas
+  ciudad: AreaC(1,1,100,100)
+  
+robots
+  robot robot1
+  variables
+    esqVacias: numero
+    cantFlores: numero
+  comenzar
+    mientras PosAv <> 7
+      cantFlores := 0
+      esqVacias := 0
+      mientras PosCa <> 100
+        si HayFlorEnLaEsquina
+          tomarFlor
+        sino
+          esqVacias := esqVacias + 1
+        mover
+      contarFloresDepositadas(cantFlores)
+      Informar(cantFlores)
+      Informar(esqVacias)
+      Pos(PosAv+2, 1)
+  fin
+  
+variables
+  rinfo: robot1
+  
+comenzar
+  AsignarArea(rinfo, ciudad)
+  Iniciar(rinfo,1,1)
+fin

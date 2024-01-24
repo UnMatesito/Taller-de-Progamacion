@@ -1,0 +1,129 @@
+programa E05P3
+
+procesos
+  proceso enviarIds
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+  fin
+
+  proceso tomarUnPapel(ES hayPapel:boolean)
+  comenzar
+    si HayPapelEnLaEsquina
+      tomarPapel
+    sino
+      hayPapel := F
+  fin
+
+  proceso depositarUnPapel
+  comenzar
+    si HayPapelEnLaBolsa
+      depositarPapel
+      mover
+  fin
+  
+  proceso actMaximo(E id:numero E caAct:numero ES rMax:numero)
+  variables
+    max:numero
+  comenzar
+    max := -1
+    si caAct > max
+      max := caAct
+      rMax := id
+  fin
+
+  proceso determinarGanador(E id:numero E caAct:numero ES rMax:numero)
+  comenzar
+    si id = 1
+      RecibirMensaje(caAct, r1)
+      actMaximo(id, caAct, rMax)
+    si id = 2
+      RecibirMensaje(caAct, r2)
+      actMaximo(id, caAct, rMax)
+    si id = 3
+      RecibirMensaje(caAct, r3)
+      actMaximo(id, caAct, rMax)
+    si id = 4
+      RecibirMensaje(caAct, r4)
+      actMaximo(id, caAct, rMax)
+  fin
+
+areas
+  puntoJefe: AreaP(1,1,1,1)
+  puntoPapeles: AreaPC(11,11,11,11)
+  linea1: AreaP(4,1,4,100)
+  linea2: AreaP(6,1,6,100)
+  linea3: AreaP(8,1,8,100)
+  linea4: AreaP(10,1,10,100)
+
+robots
+  robot participante
+  variables
+    id:numero
+    caAct:numero
+    hayPapel:boolean
+    finalice:boolean
+    avInicial:numero
+  comenzar
+    avInicial:= PosAv
+    hayPapel := V
+    finalice := F
+    caAct:= 1
+    RecibirMensaje(id, coordinador)
+    mientras ((hayPapel = V) & (caAct <> 100))
+      BloquearEsquina(11,11)
+      Pos(11,11)
+      tomarUnPapel(hayPapel)
+      Pos(avInicial, caAct)
+      LiberarEsquina(11,11)
+      depositarUnPapel
+      caAct := caAct + 1
+    si HayPapelEnLaBolsa
+      depositarPapel
+    si ((hayPapel = F) | (caAct = 100))
+      finalice := V
+    EnviarMensaje(finalice, coordinador)
+    EnviarMensaje(id, coordinador)
+    EnviarMensaje(caAct, coordinador)
+  fin
+
+  robot jefe
+  variables
+    id:numero
+    finalice: boolean
+    caAct:numero
+    rMax:numero
+  comenzar
+    enviarIds
+    repetir 4
+      RecibirMensaje(finalice, *)
+      si finalice = V
+        RecibirMensaje(id, *)
+        determinarGanador(id, caAct, rMax)
+    Informar(rMax)
+  fin
+
+variables
+  coordinador: jefe
+  r1: participante
+  r2: participante
+  r3: participante
+  r4: participante
+comenzar
+  AsignarArea(coordinador, puntoJefe)
+  AsignarArea(r1,linea1)
+  AsignarArea(r2,linea2)
+  AsignarArea(r3,linea3)
+  AsignarArea(r4,linea4)
+  AsignarArea(r1, puntoPapeles)
+  AsignarArea(r2, puntoPapeles)
+  AsignarArea(r3, puntoPapeles)
+  AsignarArea(r4, puntoPapeles)
+  Iniciar(coordinador,1,1)
+  Iniciar(r1,4,1)
+  Iniciar(r2,6,1)
+  Iniciar(r3,8,1)
+  Iniciar(r4,10,1)
+fin

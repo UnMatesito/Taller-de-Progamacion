@@ -1,0 +1,118 @@
+programa E02P4
+
+procesos 
+  proceso juntarPapeles(ES cantPapeles:numero)
+  variables
+    avActual:numero
+    caActual:numero
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+      si cantPapeles = 5
+        cantPapeles := 0
+        BloquearEsquina(50,50)
+        avActual := PosAv
+        caActual := PosCa
+        Pos(50,50)
+        depositarPapeles
+        Pos(avActual, caActual)
+        LiberarEsquina(50,50)
+        EnviarMensaje(V, r3)
+        EnviarMensaje(V, r4) 
+  fin
+
+  proceso depositarPapeles
+  comenzar
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+  fin
+
+  proceso contarPapeles(ES totalPapeles:numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      totalPapeles := totalPapeles + 1
+    mientras HayFlorEnLaBolsa
+      depositarPapel
+  fin
+
+areas
+  puntoRecoleccion: AreaC(50,50,50,50)
+  avenida5: AreaP(5,1,5,100)
+  avenida10: AreaP(10,1,10,100)
+  puntoC1: AreaP(11,1,11,1)
+  puntoC2: AreaP(12,1,12,1)
+robots
+  robot productor
+  variables
+    avActual:numero
+    caActual:numero
+    cantPapeles:numero
+    puedo: boolean
+  comenzar
+    cantPapeles:= 0
+    RecibirMensaje(puedo, *) 
+    mientras ((puedo = V) & (PosCa <> 100))
+      juntarPapeles(cantPapeles)
+      mover
+  fin
+
+  robot consumidor
+  variables
+    avInicial:numero
+    caInicial:numero
+    totalPapeles:numero
+    papelesATomar:numero
+    cantPapeles:numero
+    intentos:numero
+    puedo: boolean
+  comenzar
+    intentos := 0
+    avInicial := PosAv
+    caInicial := PosCa
+    puedo := F
+    EnviarMensaje(V, r1)
+    EnviarMensaje(V, r2)
+    RecibirMensaje(puedo, *)
+    mientras ((puedo = V) & (intentos <> 8))
+      Random(papelesATomar, 2,5)
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      contarPapeles(totalPapeles)
+      si papelesATomar = totalPapeles
+        repetir papelesATomar
+          si HayPapelEnLaEsquina
+            tomarPapel
+        totalPapeles := totalPapeles - papelesATomar
+      sino
+        intentos := intentos + 1
+      Pos(avInicial, caInicial)
+      LiberarEsquina(50,50)
+      EnviarMensaje(V, r1)
+      EnviarMensaje(V, r2)
+      RecibirMensaje(puedo, *)
+    EnviarMensaje(F, r1)
+    EnviarMensaje(F, r2)
+  fin
+
+variables
+  r1:productor
+  r2:productor
+  r3:consumidor
+  r4:consumidor
+
+comenzar
+  AsignarArea(r1,avenida5)
+  AsignarArea(r2,avenida10)
+  AsignarArea(r3,puntoC1)
+  AsignarArea(r4,puntoC2)
+  AsignarArea(r1, puntoRecoleccion)
+  AsignarArea(r2, puntoRecoleccion)
+  AsignarArea(r3, puntoRecoleccion)
+  AsignarArea(r4, puntoRecoleccion)
+  Iniciar(r1, 5,1)
+  Iniciar(r2, 10,1)
+  Iniciar(r3, 11,1)
+  Iniciar(r4, 12,1)
+fin

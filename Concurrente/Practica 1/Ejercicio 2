@@ -1,0 +1,88 @@
+programa E02P1
+
+procesos
+  proceso recorrer
+  comenzar
+    repetir 4
+      mientras HayPapelEnLaEsquina
+        tomarPapel
+      mover
+  fin
+  
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  
+  proceso contarPapeles(ES cantPapeles:numero)
+  comenzar
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+      cantPapeles:= cantPapeles + 1
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+    Informar(cantPapeles)
+  fin
+  
+areas
+  cuadrado: AreaC(1,1,5,5)
+
+robots
+  robot robot1
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles:= 0
+    recorrer
+    contarPapeles(cantPapeles)
+    
+  fin
+  
+  robot robot2
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles:= 0
+    derecha
+    recorrer
+    contarPapeles(cantPapeles)
+  fin
+  
+  robot robot3
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles:=0
+    derecha
+    derecha
+    recorrer
+    contarPapeles(cantPapeles)
+  fin
+  
+  robot robot4
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles:= 0
+    izquierda
+    recorrer
+    contarPapeles(cantPapeles)
+  fin
+
+variables
+  r1:robot1
+  r2:robot2
+  r3:robot3
+  r4:robot4
+
+comenzar
+  AsignarArea(r1, cuadrado)
+  AsignarArea(r2, cuadrado)
+  AsignarArea(r3, cuadrado)
+  AsignarArea(r4, cuadrado)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 1, 5)
+  Iniciar(r3, 5, 5)
+  Iniciar(r4, 5, 1)
+fin

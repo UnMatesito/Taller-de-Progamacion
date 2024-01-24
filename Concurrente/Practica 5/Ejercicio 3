@@ -1,0 +1,107 @@
+programa E03P5
+
+procesos
+  proceso tomarUnaFlor(ES cantFlores:numero)
+  comenzar
+    si HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso depositarFlores
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+  fin
+  
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+areas
+  calle1: AreaP(1,3,100,3)
+  calle2: AreaP(1,4,100,4)
+  puntoRecoleccion: AreaC (10,10,10,10)
+  puntoJefe: AreaP(1,5,1,5)
+  
+robots
+  robot recolector
+  variables
+    cantEsq: numero
+    cantFlores: numero
+    ca: numero
+    av:numero
+  comenzar
+    cantEsq := 0
+    cantFlores := 0
+    ca := PosCa
+    derecha
+    mientras PosAv <> 100
+      si ((cantEsq <> 5) & (cantFlores <> 10))
+        tomarUnaFlor(cantFlores)
+        mover
+        cantEsq := cantEsq + 1
+        EnviarMensaje(F, cosechador)
+      sino
+        av := PosAv
+        BloquearEsquina(10,10)
+        Pos(10,10)
+        depositarFlores
+        Pos(av,ca)
+        LiberarEsquina(10,10)
+        cantEsq := 0
+        cantFlores := 0
+        EnviarMensaje(V, cosechador)
+        EnviarMensaje(F, cosechador)
+    EnviarMensaje(V, cosechador)
+  fin
+  
+  robot jefe
+  variables
+    termine: boolean
+    av: numero
+    ca: numero
+    llegue : boolean
+    contador: numero
+    cantFlores: numero
+  comenzar
+    contador := 0
+    cantFlores := 0
+    av := PosAv
+    ca := PosCa
+    termine := F
+    mientras termine = F
+      mientras contador <> 2
+        RecibirMensaje(llegue, *)
+        si llegue = V
+          contador := contador + 1
+      si contador = 2
+        BloquearEsquina(10,10)
+        Pos(10,10)
+        juntarFlores(cantFlores)
+        Pos(av, ca)
+        LiberarEsquina(10,10)
+        contador := 0
+      RecibirMensaje(termine, *)
+    si termine = V
+      Informar('Cantidad_Flores', cantFlores)   
+  fin
+  
+variables
+  r1: recolector
+  r2: recolector
+  cosechador: jefe
+comenzar
+  AsignarArea(r1, calle1)
+  AsignarArea(r2, calle2)
+  AsignarArea(cosechador, puntoJefe)
+  AsignarArea(r1, puntoRecoleccion)
+  AsignarArea(r2, puntoRecoleccion)
+  AsignarArea(cosechador, puntoRecoleccion)
+  Iniciar(r1, 1,3)
+  Iniciar(r2, 1,4)
+  Iniciar(cosechador, 1,5)
+fin

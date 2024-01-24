@@ -1,0 +1,164 @@
+programa Parcial2
+
+procesos
+  proceso tomarUnaFlor
+  comenzar
+    si HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  
+  proceso tomarUnPapel
+  comenzar
+    si HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  
+  proceso depositarUnaFlor
+  comenzar
+    si HayFlorEnLaBolsa
+      depositarFlor
+      mover
+  fin
+  
+  proceso depositarUnPapel
+  comenzar
+    si HayPapelEnLaBolsa
+      depositarPapel
+      mover
+  fin
+ 
+areas
+  puntoJefe: AreaP(1,1,1,1)
+  punto1: AreaP(50,50,50,50)
+  punto2: AreaP(51,51,51,51)
+  punto3: AreaP(52,52,52,52)
+  punto4: AreaP(53,53,53,53)
+  AreaL: AreaPC(5,4,15,16)
+  
+robots
+  robot horizontal
+  variables
+    id:numero
+    av: numero
+    ca: numero
+  comenzar
+    BloquearEsquina(15,15)
+    Pos(15,15)
+    tomarUnaFlor
+    derecha
+    RecibirMensaje(id, jefe)
+    si id = 1
+      BloquearEsquina(5,4)
+      Pos(5,4)
+      LiberarEsquina(15,15)
+      depositarUnaFlor
+      LiberarEsquina(5,4)
+    sino
+      si id = 2
+        BloquearEsquina(11,4)
+        Pos(11,4)
+        LiberarEsquina(15,15)
+        depositarUnaFlor
+        LiberarEsquina(11,4)
+    repetir 3
+      av := PosAv
+      ca := PosCa
+      BloquearEsquina(15,15)
+      Pos(15,15)
+      tomarUnaFlor
+      Pos(av, ca)
+      LiberarEsquina(15,15)
+      depositarUnaFlor
+    EnviarMensaje(id, jefe)
+    EnviarMensaje(V, jefe)
+  fin
+  
+  robot vertical
+  variables
+    id:numero
+    av: numero
+    ca: numero
+  comenzar
+    BloquearEsquina(15,15)
+    Pos(15,15)
+    tomarUnPapel
+    RecibirMensaje(id, jefe)
+    si id = 1
+      BloquearEsquina(5,4)
+      Pos(5,4)
+      LiberarEsquina(15,15)
+      depositarUnPapel
+      LiberarEsquina(5,4)
+    sino
+      si id = 2
+        BloquearEsquina(11,4)
+        Pos(11,4)
+        LiberarEsquina(15,15)
+        depositarUnPapel
+        LiberarEsquina(11,4)
+    repetir 11
+      av := PosAv
+      ca := PosCa
+      BloquearEsquina(15,15)
+      Pos(15,15)
+      tomarUnPapel
+      Pos(av, ca)
+      LiberarEsquina(15,15)
+      depositarUnPapel
+    EnviarMensaje(id, jefe)
+    EnviarMensaje(V, jefe)
+  fin
+  
+  robot fiscalizador
+  variables
+    id:numero
+    termine: boolean
+    ganador: numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(1,r2)
+    EnviarMensaje(2,r3)
+    EnviarMensaje(2,r4)
+    ganador := 0
+    mientras ganador = 0
+      RecibirMensaje(id, *)
+      si id = 1
+        RecibirMensaje(termine, r1)
+        si termine = V
+          RecibirMensaje(termine, r2)
+          ganador := 1
+        sino
+          ganador := 2
+      sino
+        si id = 2
+          RecibirMensaje(termine, r3)
+          si termine = V
+            RecibirMensaje(termine, r4)
+            ganador := 2
+          sino
+            ganador := 1
+    Informar(ganador)
+  fin
+  
+variables
+  r1: horizontal
+  r2: vertical
+  r3: horizontal
+  r4: vertical
+  jefe: fiscalizador
+comenzar
+  AsignarArea(r1, punto1)
+  AsignarArea(r2, punto2)
+  AsignarArea(r3, punto3)
+  AsignarArea(r4, punto4)
+  AsignarArea(jefe, puntoJefe)
+  AsignarArea(r1, AreaL)
+  AsignarArea(r2, AreaL)
+  AsignarArea(r3, AreaL)
+  AsignarArea(r4, AreaL)
+  Iniciar(r1,50,50)
+  Iniciar(r2,51,51)
+  Iniciar(r3,52,52)
+  Iniciar(r4,53,53)
+  Iniciar(jefe,1,1)
+fin

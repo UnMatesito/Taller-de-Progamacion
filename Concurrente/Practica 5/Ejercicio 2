@@ -1,0 +1,106 @@
+programa E02P5
+
+procesos
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso depositarFlores
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+  fin
+  
+  proceso barrera(E id:numero)
+  comenzar
+    si id = 1
+      EnviarMensaje(F, r2)
+      EnviarMensaje(F, r3)
+    sino
+      si id = 2
+        EnviarMensaje(F, r1)
+        EnviarMensaje(F, r3)
+      sino
+        si id = 3
+          EnviarMensaje(F, r2)
+          EnviarMensaje(F, r1)
+  fin
+areas
+  calle1: AreaP(1,1,100,1)
+  calle2: AreaP(1,2,100,2)
+  calle3: AreaP(1,3,100,3)
+  puntoJefe: AreaP(1,4,1,4)
+  puntoRecoleccion: AreaC(50,50,50,50)
+  
+robots
+  robot recolector
+  variables
+    id: numero
+    cantFlores:numero
+    cantEsq: numero
+    ca:numero
+    av:numero
+    llegue: boolean
+  comenzar
+    cantFlores := 0
+    ca := PosCa
+    RecibirMensaje(id, r4)
+    derecha
+    repetir 10
+      mientras cantEsq <> 10
+        juntarFlores(cantFlores)
+        cantEsq := cantEsq + 1
+        si PosAv <> 100
+          mover
+      av := PosAv
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      depositarFlores
+      Pos(av,ca)
+      LiberarEsquina(50,50)
+      llegue := V
+      barrera(id)
+      RecibirMensaje(llegue, *)
+      RecibirMensaje(llegue, *)
+      cantEsq := 0
+    EnviarMensaje(V, r4)   
+  fin
+  
+  robot jefe
+  variables
+    cantFlores:numero
+    puedo: boolean
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    cantFlores := 0
+    RecibirMensaje(puedo, *)
+    si puedo = V
+      Pos(50,50)
+      juntarFlores(cantFlores)
+      Informar(cantFlores)
+  fin
+  
+variables
+  r1: recolector
+  r2: recolector
+  r3: recolector
+  r4: jefe
+comenzar
+  AsignarArea(r1, calle1)
+  AsignarArea(r2, calle2)
+  AsignarArea(r3, calle3)
+  AsignarArea(r4, puntoJefe)
+  AsignarArea(r1, puntoRecoleccion)
+  AsignarArea(r2, puntoRecoleccion)
+  AsignarArea(r3, puntoRecoleccion)
+  AsignarArea(r4, puntoRecoleccion)
+  Iniciar(r1,1,1)
+  Iniciar(r2,1,2)
+  Iniciar(r3,1,3)
+  Iniciar(r4,1,4)
+fin

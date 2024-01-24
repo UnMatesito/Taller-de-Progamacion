@@ -1,0 +1,80 @@
+programa E01P3
+
+procesos
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso recorrerLinea(ES cantFlores:numero)
+  comenzar
+    repetir 9
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+  fin
+
+  proceso determinarGanador(E cantFlores:numero ES max:numero)
+  comenzar
+    si cantFlores > max
+      max:= cantFlores
+  fin
+
+areas
+  linea1: AreaP(1,1,1,10)
+  linea2: AreaP(2,11,2,20)
+  linea3: AreaP(3,21,3,30)
+  linea4: AreaP(4,31,4,40)
+  linea5: AreaP(5,41,5,50)
+  linea6: AreaP(6,51,6,60)
+  punto: AreaP(2,1,2,1)
+
+robots
+  robot competidor
+  variables
+    cantFlores: numero
+  comenzar
+    cantFlores := 0
+    recorrerLinea(cantFlores)
+    EnviarMensaje(cantFlores, jefe)
+  fin
+
+  robot fiscalizador
+  variables
+    cantFlores:numero
+    max: numero
+  comenzar
+    max:= -1
+    repetir 6
+      RecibirMensaje(cantFlores, *)
+      determinarGanador(cantFlores, max)
+    Informar(max)
+  fin
+
+variables
+  roberto1: competidor
+  roberto2: competidor
+  roberto3: competidor
+  roberto4: competidor
+  roberto5: competidor
+  roberto6: competidor
+  jefe: fiscalizador
+
+comenzar
+  AsignarArea(roberto1, linea1)
+  AsignarArea(roberto2, linea2)
+  AsignarArea(roberto3, linea3)
+  AsignarArea(roberto4, linea4)
+  AsignarArea(roberto5, linea5)
+  AsignarArea(roberto6, linea6)
+  AsignarArea(jefe, punto)
+  Iniciar(roberto1,1,1)
+  Iniciar(roberto2,2,11)
+  Iniciar(roberto3,3,21)
+  Iniciar(roberto4,4,31)
+  Iniciar(roberto5,5,41)
+  Iniciar(roberto6,6,51)
+  Iniciar(jefe,2,1)
+fin

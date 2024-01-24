@@ -1,0 +1,111 @@
+programa E01P3
+
+procesos
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  
+  proceso recorrerLinea(ES cantFlores:numero)
+  comenzar
+    repetir 9
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+  fin
+
+  proceso determinarGanador(E cantFlores:numero ES max:numero ES numRobot:numero)
+  variables
+    rmax: numero
+  comenzar
+    si cantFlores > max
+      rmax:= numRobot
+      max:= cantFlores
+  fin
+  
+  proceso determinarRobot(E quienSoy:numero E cantFlores:numero)
+  comenzar
+    si(quienSoy = 1)
+      RecibirMensaje(cantFlores, r1)
+    si(quienSoy = 2)
+      RecibirMensaje(cantFlores, r2)
+    si(quienSoy = 3)
+      RecibirMensaje(cantFlores, r3)
+    si(quienSoy = 4)
+      RecibirMensaje(cantFlores, r4)
+    si(quienSoy = 5)
+      RecibirMensaje(cantFlores, r5)
+    si(quienSoy = 6)
+      RecibirMensaje(cantFlores, r6)
+  fin
+  
+areas
+  linea1: AreaP(1,1,1,10)
+  linea2: AreaP(2,11,2,20)
+  linea3: AreaP(3,21,3,30)
+  linea4: AreaP(4,31,4,40)
+  linea5: AreaP(5,41,5,50)
+  linea6: AreaP(6,51,6,60)
+  punto: AreaP(2,1,2,1)
+
+robots
+  robot competidor
+  variables
+    cantFlores: numero
+    quienSoy: numero
+  comenzar
+    RecibirMensaje(quienSoy, r7)
+    cantFlores := 0
+    recorrerLinea(cantFlores)
+    EnviarMensaje(quienSoy, r7)
+    EnviarMensaje(cantFlores, r7)
+  fin
+
+  robot fiscalizador
+  variables
+    cantFlores:numero
+    max: numero
+    quienSoy:numero
+  comenzar
+    max := -1
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    EnviarMensaje(4, r4)
+    EnviarMensaje(5, r5)
+    EnviarMensaje(6, r6)
+    repetir 6
+      RecibirMensaje(quienSoy, *)
+      determinarRobot(quienSoy, cantFlores)
+      determinarGanador(cantFlores, max, quienSoy)
+    Informar(max)
+    Informar(quienSoy)
+  fin
+
+variables
+  r1: competidor
+  r2: competidor
+  r3: competidor
+  r4: competidor
+  r5: competidor
+  r6: competidor
+  r7: fiscalizador
+
+comenzar
+  AsignarArea(r1, linea1)
+  AsignarArea(r2, linea2)
+  AsignarArea(r3, linea3)
+  AsignarArea(r4, linea4)
+  AsignarArea(r5, linea5)
+  AsignarArea(r6, linea6)
+  AsignarArea(r7, punto)
+  Iniciar(r1,1,1)
+  Iniciar(r2,2,11)
+  Iniciar(r3,3,21)
+  Iniciar(r4,4,31)
+  Iniciar(r5,5,41)
+  Iniciar(r6,6,51)
+  Iniciar(r7,2,1)
+fin

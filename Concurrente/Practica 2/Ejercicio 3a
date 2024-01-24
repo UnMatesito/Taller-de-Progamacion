@@ -1,0 +1,122 @@
+programa E03P2
+
+procesos
+  proceso juntarPapeles(ES cantPapeles:numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles:= cantPapeles + 1
+  fin
+
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores:= cantFlores + 1
+  fin
+
+  proceso recorrerJuntandoPapeles(ES cantPapeles:numero)
+  comenzar
+    repetir 9
+      juntarPapeles(cantPapeles)
+      mover
+    juntarPapeles(cantPapeles)
+  fin
+
+  proceso recorrerJuntandoFlores(ES cantFlores:numero)
+  comenzar
+    repetir 9
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+  fin
+
+  proceso recorrerCallesA1
+  variables
+    seguir: boolean
+    cantPapeles:numero
+  comenzar
+    cantPapeles:= 0
+    recorrerJuntandoPapeles(cantPapeles)
+    si PosCa = 10
+      seguir := V
+    EnviarMensaje(cantPapeles, a2)
+    EnviarMensaje(seguir, a2)
+  fin
+
+  proceso recorrerCallesA2
+  variables
+    cantPapeles:numero
+    seguir: boolean
+  comenzar
+    RecibirMensaje(cantPapeles, a1)
+    RecibirMensaje(seguir, a1)
+    si seguir = V
+      recorrerJuntandoPapeles(cantPapeles)
+    Informar(cantPapeles)
+  fin
+
+  proceso recorrerCallesB1
+  variables
+    cantFlores:numero
+    seguir: boolean
+  comenzar
+    cantFlores:= 0
+    recorrerJuntandoFlores(cantFlores)
+    si PosCa = 10
+      seguir:= V
+    EnviarMensaje(cantFlores, b2)
+    EnviarMensaje(seguir, b2)
+  fin
+
+  proceso recorrerCallesB2
+  variables
+    cantFlores:numero
+    seguir: boolean
+  comenzar
+    RecibirMensaje(cantFlores, b1)
+    RecibirMensaje(seguir, b1)
+    si seguir = V
+      recorrerJuntandoFlores(cantFlores)
+    Informar(cantFlores)
+  fin
+
+areas
+  linea1: AreaPC(1,1,1,20)
+  linea2: AreaPC(2,1,2,20)
+robots
+  robot robotA1
+  comenzar
+    recorrerCallesA1
+  fin
+  
+  robot robotA2
+  comenzar
+    recorrerCallesA2
+  fin
+
+  robot robotB1
+  comenzar
+    recorrerCallesB1
+  fin
+
+  robot robotB2
+  comenzar
+    recorrerCallesB2
+  fin
+
+variables
+  a1: robotA1
+  a2: robotA2
+  b1: robotB1
+  b2: robotB2
+comenzar
+  AsignarArea(a1, linea1)
+  AsignarArea(a2, linea1)
+  AsignarArea(b1, linea2)
+  AsignarArea(b2, linea2)
+  Iniciar(a1,1,1)
+  Iniciar(a2,1,11)
+  Iniciar(b1,2,1)
+  Iniciar(b2,2,11)
+fin

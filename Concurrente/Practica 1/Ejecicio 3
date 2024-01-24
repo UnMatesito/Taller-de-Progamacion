@@ -1,0 +1,81 @@
+programa E03P1
+
+procesos
+  proceso doblar
+  comenzar
+    repetir 3
+      derecha  
+  fin
+ 
+  proceso escalon(E tamano:numero ES cantFlores:numero ES cantPapeles:numero)
+  comenzar
+    repetir tamano
+      juntarFlores(cantFlores)
+      juntarPapeles(cantPapeles)
+      mover
+    derecha
+    repetir tamano
+      juntarFlores(cantFlores)
+      juntarPapeles(cantPapeles)
+      mover
+    juntarFlores(cantFlores)
+    juntarPapeles(cantPapeles)
+  fin
+
+  proceso juntarFlores(ES cantFlores:numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      cantFlores:= cantFlores + 1
+  fin
+
+  proceso juntarPapeles(ES cantPapeles:numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+
+  proceso escalera (ES masPapelesqueFlores:numero)
+  variables
+    tamano: numero
+    cantPapeles:numero
+    cantFlores:numero
+  comenzar
+    tamano:= 1
+    repetir 4
+      cantFlores:=0
+      cantPapeles:=0
+      escalon(tamano, cantFlores, cantPapeles)
+      si cantFlores = (cantPapeles - 1)
+        masPapelesqueFlores := masPapelesqueFlores + 1
+      doblar
+      tamano:= tamano + 1
+  fin  
+
+areas
+  ciudad: AreaC(1,1,100,100)
+
+robots
+  robot robot1
+  variables
+    masPapelesqueFlores: numero
+  comenzar
+    masPapelesqueFlores:= 0
+    escalera(masPapelesqueFlores)
+    Informar(masPapelesqueFlores)
+  fin
+
+variables
+  r1:robot1
+  r2:robot1
+  r3:robot1
+
+comenzar
+  AsignarArea(r1, ciudad)
+  AsignarArea(r2, ciudad)
+  AsignarArea(r3, ciudad)
+  Iniciar(r1, 22, 6)
+  Iniciar(r2, 17, 10)
+  Iniciar(r3, 12, 14)
+fin

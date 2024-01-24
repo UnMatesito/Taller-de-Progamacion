@@ -1,0 +1,79 @@
+programa E04P1
+
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  
+  proceso limpiarFlores
+  comenzar
+    mientras PosCa <> 100
+      juntarFlores
+      mover
+    juntarFlores
+  fin
+  
+  proceso limpiarPapeles
+  comenzar
+    mientras PosCa <> 100
+      juntarPapeles
+      mover
+    juntarPapeles
+  fin
+  
+  proceso recorrerAreaImpares(E avenidas:numero)
+  comenzar
+    mientras PosAv <> avenidas
+      limpiarFlores
+      Pos(PosAv+1,1)
+    limpiarFlores
+  fin
+  
+  proceso recorrerAreaPares(E avenidas:numero)
+  comenzar
+    mientras PosAv <> avenidas
+      limpiarPapeles
+      Pos(PosAv+1,1)
+    limpiarPapeles
+  fin
+  
+areas
+  area1: AreaP(1,1,25,100)
+  area2: AreaP(26,1,50,100)
+  area3: AreaP(51,1,75,100)
+  area4: AreaP(76,1,100,100)
+  
+robots
+  robot robot1
+  comenzar
+    recorrerAreaImpares(25)
+    Pos(51,1)
+    recorrerAreaImpares(75)
+  fin
+  
+  robot robot2
+  comenzar
+    recorrerAreaPares(50)
+    Pos(76,1)
+    recorrerAreaPares(100)
+  fin
+  
+variables
+  r1:robot1
+  r2:robot2
+comenzar
+  AsignarArea(r1, area1)
+  AsignarArea(r1, area3)
+  AsignarArea(r2, area2)
+  AsignarArea(r2, area4)
+  Iniciar(r1, 1, 1)
+  Iniciar(r2, 26, 1)
+fin

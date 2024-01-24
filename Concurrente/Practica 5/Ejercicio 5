@@ -1,0 +1,100 @@
+programa E05P5
+
+procesos
+  proceso depositarPapeles(E cantPapeles:numero)
+  comenzar
+    repetir cantPapeles
+      depositarPapel
+  fin
+  
+  proceso tomarUnPapel
+  comenzar
+    si HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  
+areas
+  AreaPapeles: AreaC(100,1,100,1)
+  punto1: AreaP(10,1,10,1)
+  punto2: AreaP(11,1,11,1)
+  punto3: AreaP(12,1,12,1)
+  puntoJefe: AreaP(13,1,13,1)
+  
+robots
+  robot servidor
+  variables
+    cantPapeles: numero
+    puedo: boolean
+    id: numero
+    contador: numero
+  comenzar
+    EnviarMensaje(1, r1)
+    EnviarMensaje(2, r2)
+    EnviarMensaje(3, r3)
+    contador := 0
+    mientras contador <> 3
+      RecibirMensaje(puedo, *)
+      si puedo = V
+        RecibirMensaje(id, *)
+        BloquearEsquina(100,1)
+        Pos(100,1)
+        Random(cantPapeles,1,5)
+        depositarPapeles(cantPapeles)
+        Pos(13,1)
+        LiberarEsquina(100,1)
+        si id = 1
+          EnviarMensaje(cantPapeles, r1)
+        sino
+          si id = 2
+            EnviarMensaje(cantPapeles, r2)
+          sino
+            si id = 3
+              EnviarMensaje(cantPapeles, r3)
+      sino
+        contador := contador + 1
+  fin
+  
+  robot cliente
+  variables
+    id:numero
+    avInicial:numero
+    caInicial:numero
+    cantPapeles:numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    RecibirMensaje(id, jefe)
+    repetir 4
+      EnviarMensaje(V, jefe)
+      EnviarMensaje(id, jefe)
+      RecibirMensaje(cantPapeles, jefe)
+      repetir cantPapeles
+        BloquearEsquina(100,1)
+        Pos(100,1)
+        tomarUnPapel
+        Pos(avInicial, caInicial)
+        si HayPapelEnLaBolsa
+          depositarPapel
+        LiberarEsquina(100,1)
+    EnviarMensaje(F, jefe)
+  fin
+  
+variables
+  r1: cliente
+  r2: cliente
+  r3: cliente
+  jefe: servidor
+comenzar
+  AsignarArea(r1, punto1)
+  AsignarArea(r2, punto2)
+  AsignarArea(r3, punto3)
+  AsignarArea(jefe, puntoJefe)
+  AsignarArea(r1, AreaPapeles)
+  AsignarArea(r2, AreaPapeles)
+  AsignarArea(r3, AreaPapeles)
+  AsignarArea(jefe, AreaPapeles)
+  Iniciar(r1, 10,1)
+  Iniciar(r2, 11,1)
+  Iniciar(r3, 12,1)
+  Iniciar(jefe, 13,1)
+fin

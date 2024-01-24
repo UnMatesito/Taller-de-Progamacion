@@ -1,0 +1,107 @@
+programa E01P3
+
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+
+  proceso juntarPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+  proceso depositarFlores
+  comenzar
+    si HayFlorEnLaBolsa
+      depositarFlor
+  fin
+
+  proceso depositarPapeles
+  comenzar
+    si HayPapelEnLaBolsa
+      depositarPapel
+  fin
+
+areas
+  punto1: AreaP(6,10,6,10)
+  punto2: AreaP(7,10,7,10)
+  punto3: AreaP(8,10,8,10)
+  punto4: AreaP(9,10,9,10)
+  punto5: AreaC(10,10,10,10)
+  areaFloreros: AreaPC(1,1,5,10)
+  areaPapeleros: AreaPC(6,1,10,9)
+robots
+  robot florero
+  variables
+    av:numero
+    ca:numero
+    avInicial:numero
+    caInicial:numero
+  comenzar
+    avInicial:= PosAv
+    caInicial:= PosCa
+    repetir 5
+      Random(av,1,5)
+      Random(ca,1,10)
+      BloquearEsquina(av,ca)
+      Pos(av, ca)
+      juntarFlores
+      Pos(avInicial, caInicial)
+      LiberarEsquina(av, ca)
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    depositarFlores
+    Pos(avInicial, caInicial)
+    LiberarEsquina(10,10)
+  fin
+
+  robot papelero
+  variables
+    av:numero
+    ca:numero
+    avInicial:numero
+    caInicial:numero
+  comenzar
+    avInicial:= PosAv
+    caInicial:= PosCa
+    repetir 3
+      Random(av,6,10)
+      Random(ca,1,9)
+      BloquearEsquina(av,ca)
+      Pos(av, ca)
+      juntarPapeles
+      Pos(avInicial, caInicial)
+      LiberarEsquina(av,ca)
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    depositarPapeles
+    Pos(avInicial, caInicial)
+    LiberarEsquina(10,10)
+  fin
+
+variables
+  r1:florero
+  r2:florero
+  r3:papelero
+  r4:papelero
+comenzar
+  AsignarArea(r1, punto1)
+  AsignarArea(r2, punto2)
+  AsignarArea(r3, punto3)
+  AsignarArea(r4, punto4)
+  AsignarArea(r1, areaFloreros)
+  AsignarArea(r2, areaFloreros)
+  AsignarArea(r3, areaPapeleros)
+  AsignarArea(r4, areaPapeleros)
+  AsignarArea(r1, punto5)
+  AsignarArea(r2, punto5)
+  AsignarArea(r3, punto5)
+  AsignarArea(r4, punto5)
+  Iniciar(r1,6,10)
+  Iniciar(r2,7,10)
+  Iniciar(r3,8,10)
+  Iniciar(r4,9,10)
+fin

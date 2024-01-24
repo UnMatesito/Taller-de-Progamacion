@@ -1,0 +1,94 @@
+programa E04P4
+
+procesos
+  proceso recogerFlores
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+
+  proceso recogerPapeles
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+
+  proceso vaciarBolsa
+  comenzar
+    mientras HayFlorEnLaBolsa
+      depositarFlor
+    mientras HayPapelEnLaBolsa
+      depositarPapel
+  fin
+  
+  proceso determinarTarea(E tarea:numero)
+  comenzar
+    si tarea = 1
+      recogerFlores
+    sino
+      si tarea = 2
+        recogerPapeles
+      sino
+        si tarea = 3
+          vaciarBolsa
+  fin
+
+areas
+  puntoJefe: AreaP(1,1,1,1)
+  punto1: AreaP(2,1,2,1)
+  punto2: AreaP(3,1,3,1)
+  areaTrabajos: AreaPC(2,2,100,100)
+  
+robots
+  robot trabajador
+  variables
+    tarea:numero
+    av:numero
+    ca:numero
+  comenzar
+    RecibirMensaje(tarea, r3)
+    mientras tarea <> 4
+      RecibirMensaje(av, r3)
+      RecibirMensaje(ca, r3)
+      Pos(av, ca)
+      determinarTarea(tarea)
+      RecibirMensaje(tarea, r3)
+  fin
+
+  robot jefe
+  variables
+    tarea:numero
+    av:numero
+    ca:numero
+  comenzar
+    repetir 10
+      Random(tarea, 1,3)
+      EnviarMensaje(tarea, r1)
+      Random(tarea, 1,3)
+      EnviarMensaje(tarea, r2)
+      Random(av, 2,100)
+      EnviarMensaje(av, r1)
+      Random(ca, 2,100)
+      EnviarMensaje(ca, r1)
+      Random(av, 2,100)
+      EnviarMensaje(av, r2)
+      Random(ca, 2,100)
+      EnviarMensaje(ca, r2)
+    EnviarMensaje(4, r1)
+    EnviarMensaje(4, r2)
+  fin
+
+variables
+  r1: trabajador
+  r2: trabajador
+  r3: jefe
+comenzar
+  AsignarArea(r1, punto1)
+  AsignarArea(r2, punto2)
+  AsignarArea(r3, puntoJefe)
+  AsignarArea(r1, areaTrabajos)
+  AsignarArea(r2, areaTrabajos)
+  Iniciar(r1, 2,1)
+  Iniciar(r2, 3,1)
+  Iniciar(r3, 1,1)
+fin
